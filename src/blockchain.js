@@ -70,6 +70,8 @@ class Blockchain {
     _addBlock(block) {
         let self = this;
         return new Promise(async (resolve, reject) => {
+            // block hight
+            block.height = self.chain.length;
             // UTC timestamp
             block.time = new Date()
                 .getTime()
@@ -195,11 +197,10 @@ class Blockchain {
         return new Promise((resolve, reject) => {
             self.chain.map(block => {
                 console.log("block--> ", block);
-                // const newBlock = new BlockClass.Block
-                // newBlock.getBData()
-                const data = block.getBData();
-                console.log("data--> ", data);
-                if (data.owner === address) stars.push(data);
+                block.getBData().then(data => {
+                    console.log("data--> ", data);
+                    if (data.owner === address) stars.push(data);
+                });
             });
             console.log("stars--> ", stars);
             return resolve(stars);
@@ -216,7 +217,9 @@ class Blockchain {
         let self = this;
         let errorLog = [];
         return new Promise((resolve, reject) => {
-            self.chain.map(block => {
+            self.chain.map((block, index, curArray) => {
+                if (curArray[index - 1].previousBlockHash !== block.hash)
+                    errorLog.push(false);
                 block.validate().then(valid => {
                     if (!valid) errorLog.push(valid);
                 });
