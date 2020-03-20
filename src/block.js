@@ -41,7 +41,9 @@ class Block {
             let currHash = self.hash;
             if (!currHash) return resolve(false);
             // Recalculate the hash of the Block
-            let recalculateHash = SHA256(JSON.stringify(self)).toString();
+            self.hash = null;
+            const recalculateHash = SHA256(JSON.stringify(self)).toString();
+            self.hash = recalculateHash;
             // Comparing if the hashes changed
             return currHash === recalculateHash
                 ? resolve(true)

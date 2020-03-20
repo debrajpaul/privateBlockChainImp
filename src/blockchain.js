@@ -218,7 +218,10 @@ class Blockchain {
         let errorLog = [];
         return new Promise((resolve, reject) => {
             self.chain.map((block, index, curArray) => {
-                if (curArray[index - 1].previousBlockHash !== block.hash)
+                if (
+                    index > 0 &&
+                    curArray[index - 1].previousBlockHash !== block.hash
+                )
                     errorLog.push(false);
                 block.validate().then(valid => {
                     if (!valid) errorLog.push(valid);
